@@ -168,7 +168,7 @@ export default function InternshipExperience() {
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="internship-page w-full min-h-screen bg-[#0B0B0B] text-white overflow-hidden relative z-[100]"
+        className="internship-page w-full min-h-screen bg-[#0B0B0B] text-white overflow-hidden relative z-[10]"
       >
         {/* Minimal Nav */}
         <div className="absolute top-0 left-0 w-full p-6 lg:px-12 flex justify-between items-center z-50 mix-blend-difference">

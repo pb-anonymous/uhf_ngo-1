@@ -85,7 +85,7 @@ export default function DonateExperience() {
         initial={{ y: "100%", opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-        className="donate-page w-full min-h-screen bg-[#0B0B0B] text-white overflow-hidden relative z-[100]"
+        className="donate-page w-full min-h-screen bg-[#0B0B0B] text-white overflow-hidden relative z-[10]"
       >
         {/* Subtle global atmosphere */}
         <div className="fixed inset-0 pointer-events-none mix-blend-overlay opacity-[0.02]" style={{ backgroundImage: "url('/paper_scene_1_1778800697156.png')", backgroundSize: "cover" }}></div>
@@ -152,12 +152,12 @@ export default function DonateExperience() {
               <h2 className="font-cormorant font-light text-[48px] text-[#F5F5F5] mt-4">Every amount helps support a child&apos;s future.</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex gap-4 md:gap-6 overflow-x-auto pb-8 hide-scrollbar snap-x snap-mandatory lg:grid lg:grid-cols-3 -mx-[5vw] px-[5vw] lg:mx-0 lg:px-0">
               {donationOptions.map((opt, i) => (
                 <div
                   key={i}
                   onClick={() => handleCardClick(opt.amount)}
-                  className={`donate-card relative cursor-pointer bg-[#151515] border rounded-2xl overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] p-8 h-[260px] flex flex-col justify-between ${selectedAmount === opt.amount ? 'border-[#FF9A3C]/40 bg-[#1A1A1A]' : 'border-white/[0.08] hover:border-white/20'}`}
+                  className={`donate-card relative cursor-pointer bg-[#151515] border rounded-2xl overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] p-8 h-[260px] flex flex-col justify-between min-w-[85vw] sm:min-w-[320px] lg:min-w-0 snap-center ${selectedAmount === opt.amount ? 'border-[#FF9A3C]/40 bg-[#1A1A1A]' : 'border-white/[0.08] hover:border-white/20'}`}
                 >
                   {/* Atmospheric Background Image */}
                   <div className={`absolute inset-0 z-0 transition-all duration-700 ease-out group-hover:scale-105 ${selectedAmount === opt.amount ? 'opacity-15' : 'opacity-0 group-hover:opacity-15'}`}>

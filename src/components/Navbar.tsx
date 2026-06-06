@@ -38,7 +38,7 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`fixed top-0 left-0 w-full h-[80px] z-[45] flex items-center justify-between px-6 lg:px-10 transition-colors duration-500 ${
+        className={`fixed top-0 left-0 w-full h-[80px] z-[150] flex items-center justify-between px-6 lg:px-10 transition-colors duration-500 ${
           scrolled ? "bg-[#0B0B0B] border-b border-white/5" : "bg-transparent"
         }`}
       >
@@ -108,7 +108,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div 
-        className={`fixed inset-0 bg-[#0B0B0B] z-40 flex flex-col items-center justify-center transition-all duration-500 lg:hidden ${
+        className={`fixed inset-0 bg-[#0B0B0B] z-[140] flex flex-col items-center justify-center transition-all duration-500 lg:hidden ${
           mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
       >
