@@ -9,6 +9,137 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { useRouter } from "next/navigation";
 import { getCountries, getCountryCallingCode } from 'react-phone-number-input/input';
 import { createClient } from "@/lib/supabase/client";
+import Select from "react-select";
+
+const INDIAN_STATES = [
+  { value: "Andhra Pradesh", label: "Andhra Pradesh" },
+  { value: "Arunachal Pradesh", label: "Arunachal Pradesh" },
+  { value: "Assam", label: "Assam" },
+  { value: "Bihar", label: "Bihar" },
+  { value: "Chhattisgarh", label: "Chhattisgarh" },
+  { value: "Goa", label: "Goa" },
+  { value: "Gujarat", label: "Gujarat" },
+  { value: "Haryana", label: "Haryana" },
+  { value: "Himachal Pradesh", label: "Himachal Pradesh" },
+  { value: "Jharkhand", label: "Jharkhand" },
+  { value: "Karnataka", label: "Karnataka" },
+  { value: "Kerala", label: "Kerala" },
+  { value: "Madhya Pradesh", label: "Madhya Pradesh" },
+  { value: "Maharashtra", label: "Maharashtra" },
+  { value: "Manipur", label: "Manipur" },
+  { value: "Meghalaya", label: "Meghalaya" },
+  { value: "Mizoram", label: "Mizoram" },
+  { value: "Nagaland", label: "Nagaland" },
+  { value: "Odisha", label: "Odisha" },
+  { value: "Punjab", label: "Punjab" },
+  { value: "Rajasthan", label: "Rajasthan" },
+  { value: "Sikkim", label: "Sikkim" },
+  { value: "Tamil Nadu", label: "Tamil Nadu" },
+  { value: "Telangana", label: "Telangana" },
+  { value: "Tripura", label: "Tripura" },
+  { value: "Uttar Pradesh", label: "Uttar Pradesh" },
+  { value: "Uttarakhand", label: "Uttarakhand" },
+  { value: "West Bengal", label: "West Bengal" },
+  { value: "Andaman and Nicobar Islands", label: "Andaman and Nicobar Islands" },
+  { value: "Chandigarh", label: "Chandigarh" },
+  { value: "Dadra and Nagar Haveli and Daman and Diu", label: "Dadra and Nagar Haveli and Daman and Diu" },
+  { value: "Delhi", label: "Delhi" },
+  { value: "Jammu and Kashmir", label: "Jammu and Kashmir" },
+  { value: "Ladakh", label: "Ladakh" },
+  { value: "Lakshadweep", label: "Lakshadweep" },
+  { value: "Puducherry", label: "Puducherry" },
+];
+
+const customSelectStyles = {
+  control: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: '#0B0B0B',
+    borderColor: state.isFocused ? '#FF9A3C' : 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '0.5rem',
+    minHeight: '48px',
+    boxShadow: 'none',
+    '&:hover': {
+      borderColor: state.isFocused ? '#FF9A3C' : 'rgba(255, 255, 255, 0.2)'
+    },
+    transition: 'border-color 0.2s ease-in-out'
+  }),
+  valueContainer: (provided: any) => ({
+    ...provided,
+    padding: '0 16px',
+  }),
+  input: (provided: any) => ({
+    ...provided,
+    color: 'white',
+    fontSize: '14px',
+    margin: 0,
+    padding: 0,
+  }),
+  singleValue: (provided: any) => ({
+    ...provided,
+    color: 'white',
+    fontSize: '14px',
+  }),
+  placeholder: (provided: any) => ({
+    ...provided,
+    color: '#9CA3AF',
+    fontSize: '14px',
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    backgroundColor: '#151515',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '0.5rem',
+    marginTop: '4px',
+    zIndex: 100,
+  }),
+  menuList: (provided: any) => ({
+    ...provided,
+    padding: '4px',
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: 'rgba(255, 255, 255, 0.2)',
+    },
+  }),
+  option: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? '#FF9A3C'
+      : state.isFocused
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'transparent',
+    color: state.isSelected ? '#0B0B0B' : 'white',
+    fontSize: '14px',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    '&:active': {
+      backgroundColor: '#FF9A3C',
+      color: '#0B0B0B'
+    }
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  dropdownIndicator: (provided: any, state: any) => ({
+    ...provided,
+    color: '#9CA3AF',
+    '&:hover': {
+      color: 'white'
+    }
+  }),
+  menuPortal: (provided: any) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+};
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -95,6 +226,7 @@ export default function InternshipExperience() {
   const [submitted, setSubmitted] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [countryCode, setCountryCode] = useState("+91");
+  const [selectedState, setSelectedState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const callingCodes = useMemo(() => {
@@ -106,6 +238,10 @@ export default function InternshipExperience() {
     e.preventDefault();
     if (!resumeFile) {
       alert("Please upload your resume.");
+      return;
+    }
+    if (!selectedState) {
+      alert("Please select your state.");
       return;
     }
 
@@ -141,6 +277,7 @@ export default function InternshipExperience() {
           phone: `${countryCode} ${rawPhone}`,
           college: degree ? `${institution} - ${degree}` : institution,
           city,
+          state: selectedState.value,
           linkedin,
           motivation,
           resume_url,
@@ -390,9 +527,26 @@ export default function InternshipExperience() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-element">
                     <div className="flex flex-col gap-2">
+                      <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">State/UT<span className="text-[#FF9A3C] ml-1">*</span></label>
+                      <Select
+                        options={INDIAN_STATES}
+                        value={selectedState}
+                        onChange={setSelectedState}
+                        styles={customSelectStyles}
+                        placeholder="Select your State"
+                        isSearchable={true}
+                        required
+                        menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
+                        menuPosition="fixed"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
                       <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">Institution<span className="text-[#FF9A3C] ml-1">*</span></label>
                       <input name="institution" required type="text" className="bg-[#0B0B0B] border border-white/10 rounded-lg px-4 h-[48px] text-[14px] text-white focus:outline-none focus:border-[#FF9A3C] transition-colors" />
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-element">
                     <div className="flex flex-col gap-2">
                       <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">Degree</label>
                       <input name="degree" type="text" className="bg-[#0B0B0B] border border-white/10 rounded-lg px-4 h-[48px] text-[14px] text-white focus:outline-none focus:border-[#FF9A3C] transition-colors" />

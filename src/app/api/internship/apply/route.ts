@@ -18,6 +18,7 @@ export async function POST(req: Request) {
         social_url: body.social_url,
         motivation: body.motivation,
         resume_url: body.resume_url,
+        state: body.state,
       });
 
     if (error) throw error;

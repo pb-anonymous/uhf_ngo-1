@@ -52,23 +52,12 @@ export default function OpeningAnimation() {
     gsap.set(taglineRef.current, { opacity: 0 });
     gsap.set(highlightRef.current, { opacity: 0 });
 
-    // STEP 1: Bird appears
-    tl.to(birdRef.current, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" });
-
-    // STEP 2: UNITED
-    tl.to(unitedRef.current, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, "+=0.35");
-
-    // STEP 3: H.O.P.E
-    tl.to(hopeRef.current, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, "+=0.2");
-
-    // STEP 4: FOUNDATION
-    tl.to(foundationRef.current, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, "+=0.2");
-
-    // STEP 5: TAGLINE
-    tl.to(taglineRef.current, { opacity: 1, duration: 0.4, ease: "power2.out" }, "+=0.2");
-
-    // STEP 6: HIGHLIGHT
-    tl.to(highlightRef.current, { opacity: 1, duration: 1.0, ease: "power2.inOut" }, "-=0.2");
+    // STEP 1: Elements appear simultaneously
+    tl.add("appear");
+    tl.to(birdRef.current, { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" }, "appear");
+    tl.to([unitedRef.current, hopeRef.current, foundationRef.current], { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, "appear");
+    tl.to(taglineRef.current, { opacity: 1, duration: 1.0, ease: "power2.out" }, "appear");
+    tl.to(highlightRef.current, { opacity: 1, duration: 1.0, ease: "power2.inOut" }, "appear");
 
     // Hold
     tl.to({}, { duration: 0.6 });
@@ -115,8 +104,8 @@ export default function OpeningAnimation() {
       {/* ── OPENING ANIMATION COMPOSITION (centered) ── */}
       <div
         ref={compositionRef}
-        className="fixed top-0 left-0 z-50 flex flex-col items-center pointer-events-none"
-        style={{ width: "300px", willChange: "transform" }}
+        className="fixed top-0 left-0 z-50 flex flex-col items-center pointer-events-none w-max"
+        style={{ willChange: "transform" }}
       >
         {/* Ambient highlight */}
         <div
@@ -128,12 +117,11 @@ export default function OpeningAnimation() {
           }}
         />
 
-        {/* Bird */}
         <img
           ref={birdRef}
           src="/birdmain.png"
           alt="Hummingbird"
-          className="w-[110px] h-[110px] object-contain mb-4 opacity-0 relative z-10"
+          className="w-[110px] h-[110px] object-contain -mb-4 opacity-0 relative z-10"
           style={{ mixBlendMode: "screen" }}
         />
 

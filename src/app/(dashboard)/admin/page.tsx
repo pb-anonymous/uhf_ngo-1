@@ -19,8 +19,10 @@ import {
   Network,
   TerminalSquare,
   ShieldAlert,
-  ServerCrash
+  ServerCrash,
+  FileText
 } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   return (
@@ -208,6 +210,31 @@ export default function AdminDashboard() {
                 <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">Fundraisers</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Applications Quick Access */}
+        <div className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] p-10 md:p-14 lg:col-span-2 relative overflow-hidden group hover:border-[#FF9A3C]/30 transition-colors">
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#FF9A3C]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl bg-[#FF9A3C]/10 border border-[#FF9A3C]/20 flex items-center justify-center">
+                <FileText className="w-7 h-7 text-[#FF9A3C]" />
+              </div>
+              <div>
+                <p className="text-white/40 text-[10px] uppercase tracking-widest mb-1">Recruitment</p>
+                <h2 className="text-2xl font-serif tracking-wide" style={{ fontFamily: 'var(--font-cormorant), serif' }}>Internship Applications</h2>
+                <p className="text-white/40 text-sm mt-1">Review, filter and manage all incoming intern applications.</p>
+              </div>
+            </div>
+            <Link
+              href="/admin/applications"
+              className="shrink-0 flex items-center gap-3 bg-[#FF9A3C] hover:bg-[#e8882a] text-black font-semibold text-xs uppercase tracking-widest px-8 py-4 rounded-2xl transition-colors"
+            >
+              <Users className="w-4 h-4" />
+              View Applications
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
 
