@@ -3,151 +3,95 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
-import { ArrowLeft, Award, BookOpen, Clock, HeartHandshake, Megaphone, ShieldCheck, Trophy, Users, Crown, Medal, CheckCircle, ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowLeft, Award, BookOpen, Clock, HeartHandshake, Megaphone, ShieldCheck, Trophy, Users, Crown, Medal, CheckCircle, ArrowRight, Briefcase, Sparkles, DollarSign } from "lucide-react";
 import SmoothScroll from "@/components/SmoothScroll";
 import { useRouter } from "next/navigation";
 import { getCountries, getCountryCallingCode } from 'react-phone-number-input/input';
 import { createClient } from "@/lib/supabase/client";
-import Select from "react-select";
-
-const INDIAN_STATES = [
-  { value: "Andhra Pradesh", label: "Andhra Pradesh" },
-  { value: "Arunachal Pradesh", label: "Arunachal Pradesh" },
-  { value: "Assam", label: "Assam" },
-  { value: "Bihar", label: "Bihar" },
-  { value: "Chhattisgarh", label: "Chhattisgarh" },
-  { value: "Goa", label: "Goa" },
-  { value: "Gujarat", label: "Gujarat" },
-  { value: "Haryana", label: "Haryana" },
-  { value: "Himachal Pradesh", label: "Himachal Pradesh" },
-  { value: "Jharkhand", label: "Jharkhand" },
-  { value: "Karnataka", label: "Karnataka" },
-  { value: "Kerala", label: "Kerala" },
-  { value: "Madhya Pradesh", label: "Madhya Pradesh" },
-  { value: "Maharashtra", label: "Maharashtra" },
-  { value: "Manipur", label: "Manipur" },
-  { value: "Meghalaya", label: "Meghalaya" },
-  { value: "Mizoram", label: "Mizoram" },
-  { value: "Nagaland", label: "Nagaland" },
-  { value: "Odisha", label: "Odisha" },
-  { value: "Punjab", label: "Punjab" },
-  { value: "Rajasthan", label: "Rajasthan" },
-  { value: "Sikkim", label: "Sikkim" },
-  { value: "Tamil Nadu", label: "Tamil Nadu" },
-  { value: "Telangana", label: "Telangana" },
-  { value: "Tripura", label: "Tripura" },
-  { value: "Uttar Pradesh", label: "Uttar Pradesh" },
-  { value: "Uttarakhand", label: "Uttarakhand" },
-  { value: "West Bengal", label: "West Bengal" },
-  { value: "Andaman and Nicobar Islands", label: "Andaman and Nicobar Islands" },
-  { value: "Chandigarh", label: "Chandigarh" },
-  { value: "Dadra and Nagar Haveli and Daman and Diu", label: "Dadra and Nagar Haveli and Daman and Diu" },
-  { value: "Delhi", label: "Delhi" },
-  { value: "Jammu and Kashmir", label: "Jammu and Kashmir" },
-  { value: "Ladakh", label: "Ladakh" },
-  { value: "Lakshadweep", label: "Lakshadweep" },
-  { value: "Puducherry", label: "Puducherry" },
-];
-
-const customSelectStyles = {
-  control: (provided: any, state: any) => ({
-    ...provided,
-    backgroundColor: '#0B0B0B',
-    borderColor: state.isFocused ? '#FF9A3C' : 'rgba(255, 255, 255, 0.1)',
-    borderRadius: '0.5rem',
-    minHeight: '48px',
-    boxShadow: 'none',
-    '&:hover': {
-      borderColor: state.isFocused ? '#FF9A3C' : 'rgba(255, 255, 255, 0.2)'
-    },
-    transition: 'border-color 0.2s ease-in-out'
-  }),
-  valueContainer: (provided: any) => ({
-    ...provided,
-    padding: '0 16px',
-  }),
-  input: (provided: any) => ({
-    ...provided,
-    color: 'white',
-    fontSize: '14px',
-    margin: 0,
-    padding: 0,
-  }),
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: 'white',
-    fontSize: '14px',
-  }),
-  placeholder: (provided: any) => ({
-    ...provided,
-    color: '#9CA3AF',
-    fontSize: '14px',
-  }),
-  menu: (provided: any) => ({
-    ...provided,
-    backgroundColor: '#151515',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '0.5rem',
-    marginTop: '4px',
-    zIndex: 100,
-  }),
-  menuList: (provided: any) => ({
-    ...provided,
-    padding: '4px',
-    '&::-webkit-scrollbar': {
-      width: '6px',
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      background: 'rgba(255, 255, 255, 0.1)',
-      borderRadius: '4px',
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: 'rgba(255, 255, 255, 0.2)',
-    },
-  }),
-  option: (provided: any, state: any) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? '#FF9A3C'
-      : state.isFocused
-      ? 'rgba(255, 255, 255, 0.05)'
-      : 'transparent',
-    color: state.isSelected ? '#0B0B0B' : 'white',
-    fontSize: '14px',
-    cursor: 'pointer',
-    borderRadius: '4px',
-    '&:active': {
-      backgroundColor: '#FF9A3C',
-      color: '#0B0B0B'
-    }
-  }),
-  indicatorSeparator: () => ({
-    display: 'none',
-  }),
-  dropdownIndicator: (provided: any, state: any) => ({
-    ...provided,
-    color: '#9CA3AF',
-    '&:hover': {
-      color: 'white'
-    }
-  }),
-  menuPortal: (provided: any) => ({
-    ...provided,
-    zIndex: 9999,
-  }),
-};
+import ChallengeSeries from "@/components/ChallengeSeries";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const rewardCards = [
+  {
+    icon: <Award size={24} className="text-[#F4A340]" />,
+    title: "Internship Certificate",
+    desc: "A formal, verifiable certificate recognizing your dedicated hours and service.",
+    badge: "Milestone 1"
+  },
+  {
+    icon: <HeartHandshake size={24} className="text-[#F4A340]" />,
+    title: "Crowdfunding Expertise",
+    desc: "Master digital fundraising and communication strategies that drive real social change.",
+    badge: "Milestone 2"
+  },
+  {
+    icon: <Briefcase size={24} className="text-[#F4A340]" />,
+    title: "LinkedIn Recommendation",
+    desc: "Receive professional endorsements and written testimonials on LinkedIn from our directors.",
+    badge: "Milestone 3"
+  },
+  {
+    icon: <BookOpen size={24} className="text-[#F4A340]" />,
+    title: "Letter of Recommendation",
+    desc: "Personalized reference letters from leadership to support your career or academic applications.",
+    badge: "Milestone 4"
+  },
+  {
+    icon: <Users size={24} className="text-[#F4A340]" />,
+    title: "Leadership Experience",
+    desc: "Coordinate volunteer teams, lead regional projects, and refine your management skills.",
+    badge: "Milestone 5"
+  },
+  {
+    icon: <DollarSign size={24} className="text-[#F4A340]" />,
+    title: "Performance Stipend",
+    desc: "Gain financial rewards and bonuses for exceeding target fundraising milestones.",
+    badge: "Milestone 6"
+  }
+];
 
 export default function InternshipExperience() {
   const router = useRouter();
   const formRef = useRef<HTMLElement>(null);
   const perksRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = 500;
+    const duration = 2000;
+    let startTime: number | null = null;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, []);
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const targetY = isMobile
+    ? [-275, -165, -55, 55, 165, 275]
+    : [-305, -183, -61, 61, 183, 305];
+
+  const targetX = [0, 0, 0, 0, 0, 0];
+  const targetRotate = [0, 0, 0, 0, 0, 0];
 
   useEffect(() => {
     // ScrollTrigger animations for sections
@@ -156,12 +100,6 @@ export default function InternshipExperience() {
       gsap.fromTo(".why-text",
         { opacity: 0, y: 40 },
         { opacity: 1, y: 0, duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: ".why-section", start: "top 75%" } }
-      );
-
-      // Perks reveal
-      gsap.fromTo(".perk-card",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out", scrollTrigger: { trigger: perksRef.current, start: "top 75%" } }
       );
 
       // Leaderboard reveal
@@ -204,17 +142,6 @@ export default function InternshipExperience() {
     gsap.to(".internship-page", { y: "100%", duration: 0.8, ease: "power3.inOut", onComplete: () => router.push("/") });
   };
 
-  const perks = [
-    { icon: <ShieldCheck size={28} className="text-[#FF9A3C]" />, title: "Internship Certificate", desc: "Official certification of your contribution and hours worked.", bgImage: "/story_kids.png" },
-    { icon: <HeartHandshake size={28} className="text-[#FF9A3C]" />, title: "Crowdfunding Experience", desc: "Learn to build and run real impact campaigns.", bgImage: "/hero_image.png" },
-    { icon: <Award size={28} className="text-[#FF9A3C]" />, title: "LinkedIn Recommendation", desc: "Verified skill endorsements from our leadership team.", bgImage: "/documentary_bg.png" },
-    { icon: <BookOpen size={28} className="text-[#FF9A3C]" />, title: "Letter of Recommendation", desc: "For top performers, assisting in university or job applications.", bgImage: "/story_women.png" },
-    { icon: <Clock size={28} className="text-[#FF9A3C]" />, title: "Flexible Work Hours", desc: "100% remote. Contribute based on your personal schedule.", bgImage: "/story_kids.png" },
-    { icon: <Megaphone size={28} className="text-[#FF9A3C]" />, title: "Social Media Shoutout", desc: "Features on our official handles for exceptional milestones.", bgImage: "/hero_image.png" },
-    { icon: <Users size={28} className="text-[#FF9A3C]" />, title: "Leadership Experience", desc: "Lead smaller teams and community initiatives.", bgImage: "/documentary_bg.png" },
-    { icon: <Trophy size={28} className="text-[#FF9A3C]" />, title: "Performance Stipend", desc: "Token of appreciation for extraordinary fundraising targets.", bgImage: "/story_women.png" },
-  ];
-
   const leaderboard = [
     { rank: 1, name: "Aarav Sharma", funds: "₹85,000", campaigns: 12, impact: "98" },
     { rank: 2, name: "Priya Desai", funds: "₹72,400", campaigns: 9, impact: "94" },
@@ -226,7 +153,6 @@ export default function InternshipExperience() {
   const [submitted, setSubmitted] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [countryCode, setCountryCode] = useState("+91");
-  const [selectedState, setSelectedState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const callingCodes = useMemo(() => {
@@ -238,10 +164,6 @@ export default function InternshipExperience() {
     e.preventDefault();
     if (!resumeFile) {
       alert("Please upload your resume.");
-      return;
-    }
-    if (!selectedState) {
-      alert("Please select your state.");
       return;
     }
 
@@ -277,7 +199,6 @@ export default function InternshipExperience() {
           phone: `${countryCode} ${rawPhone}`,
           college: degree ? `${institution} - ${degree}` : institution,
           city,
-          state: selectedState.value,
           linkedin,
           motivation,
           resume_url,
@@ -384,44 +305,105 @@ export default function InternshipExperience() {
           </div>
         </section>
 
-        {/* SECTION 3 - PERKS */}
-        <section ref={perksRef} className="w-full py-32 px-[5vw] border-t border-white/5 bg-[#0B0B0B] relative">
-          {/* Subtle noise/grain texture overlay for atmosphere */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('/paper_scene_1_1778800697156.png')", backgroundSize: "cover" }}></div>
+        {/* SECTION 3 - INTERNSHIP REWARDS (STACKED CARD REVEAL) */}
+        <section ref={perksRef} className="relative w-full min-h-[90vh] py-20 bg-[#050505] text-white border-t border-white/5 flex flex-col justify-between overflow-hidden">
+          {/* Ambient light / orbs */}
+          <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[35vw] h-[35vw] rounded-full bg-[#F4A340]/5 blur-[120px] pointer-events-none"></div>
+          <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[40vw] h-[40vw] rounded-full bg-[#F4A340]/3 blur-[150px] pointer-events-none"></div>
+          
+          {/* Spotlight behind cards */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(244,163,64,0.06)_0%,transparent_60%)] pointer-events-none z-0"></div>
 
-          <div className="max-w-[1200px] mx-auto relative z-10">
-            <div className="mb-20 text-center">
-              <span className="font-inter font-medium text-[11px] uppercase tracking-[0.25em] text-[#9CA3AF]">What you earn</span>
-              <h2 className="font-cormorant font-light text-[48px] text-[#F5F5F5] mt-4">Internship Perks</h2>
+          {/* Header */}
+          <div className="relative z-10 max-w-[800px] mx-auto px-6 text-center flex flex-col items-center mb-10">
+            {/* Counter */}
+            <div className="mb-4 px-3 py-1 rounded-full bg-[#F4A340]/10 border border-[#F4A340]/20 inline-flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#F4A340] animate-pulse"></span>
+              <span className="font-inter font-semibold text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-[#F4A340]">
+                {count}+ Interns Empowered
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {perks.map((perk, i) => (
-                <div key={i} className="perk-card relative bg-[#151515] border border-white/[0.08] rounded-xl overflow-hidden group hover:border-[#FF9A3C]/40 hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] h-[280px]">
+            <span className="font-inter font-semibold text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-white/50 mb-3 block">
+              WHY INTERNS LOVE UHF
+            </span>
+            
+            <h2 className="font-cormorant font-light text-[36px] md:text-[54px] leading-[1.1] text-[#F5F5F5] mb-4 tracking-[-0.01em]">
+              Your Impact. Your Growth. <br className="sm:hidden" />
+              <span className="bg-gradient-to-r from-[#F4A340] via-[#FFB86C] to-[#F4A340] bg-clip-text text-transparent font-medium">Your Rewards.</span>
+            </h2>
 
-                  {/* Atmospheric Background Image */}
-                  <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-40 transition-all duration-700 ease-out group-hover:scale-105">
-                    <img src={perk.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-75 contrast-125" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#151515] via-[#151515]/70 to-transparent"></div>
-                  </div>
+            <p className="font-inter text-[13px] md:text-[14px] leading-[1.6] text-white/60 max-w-[580px]">
+              Every milestone unlocks recognition, professional credibility, and opportunities that accelerate your career.
+            </p>
+          </div>
 
-                  {/* Card Content */}
-                  <div className="relative z-10 p-8 h-full flex flex-col justify-end">
-                    <div className="w-14 h-14 rounded-full border border-white/10 bg-[#0B0B0B]/80 backdrop-blur-sm flex items-center justify-center mb-auto group-hover:border-[#FF9A3C]/50 transition-colors duration-500">
-                      {perk.icon}
+          {/* Stack Container */}
+          <div className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto flex items-center justify-center px-4 mb-12">
+            <div className="relative w-full max-w-[380px] h-[660px] md:h-[730px] flex items-center justify-center">
+              {rewardCards.map((card, i) => {
+                const zIndex = rewardCards.length - i;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{
+                      y: 0,
+                      scale: 0.95 - i * 0.01,
+                      rotate: 0,
+                      x: 0,
+                    }}
+                    whileInView={{
+                      y: targetY[i],
+                      scale: 1,
+                      rotate: targetRotate[i],
+                      x: targetX[i],
+                    }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 60,
+                      damping: 15,
+                      delay: i * 0.12,
+                    }}
+                    className="absolute w-full h-[105px] md:h-[115px] bg-[#0D0D0D]/90 backdrop-blur-xl border border-white/[0.08] hover:border-[#F4A340]/30 rounded-[24px] p-5 md:p-6 flex items-center gap-4 md:gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.6)] group transition-colors duration-300"
+                    style={{ zIndex }}
+                  >
+                    {/* Left: Icon container */}
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center group-hover:bg-[#F4A340]/10 group-hover:border-[#F4A340]/20 transition-colors duration-300 shrink-0">
+                      {card.icon}
                     </div>
 
-                    <div className="group-hover:-translate-y-[2px] transition-transform duration-500 ease-out mt-6">
-                      <h3 className="font-inter font-semibold tracking-wide text-[14px] text-[#F5F5F5] mb-3">{perk.title}</h3>
-                      <p className="font-inter text-[13px] leading-[1.6] text-[#9CA3AF] group-hover:text-white/80 transition-colors duration-500">
-                        {perk.desc}
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <h3 className="font-inter font-semibold text-[14px] md:text-[15px] text-white group-hover:text-[#F4A340] transition-colors duration-300 truncate">
+                          {card.title}
+                        </h3>
+                        <span className="font-inter text-[9px] md:text-[10px] font-medium tracking-[0.1em] uppercase text-white/30 group-hover:text-[#F4A340]/60 transition-colors duration-300 shrink-0">
+                          {card.badge}
+                        </span>
+                      </div>
+                      <p className="font-inter text-[11px] md:text-[12px] leading-[1.4] text-white/50 group-hover:text-white/75 transition-colors duration-300 line-clamp-2">
+                        {card.desc}
                       </p>
                     </div>
-                  </div>
-
-                </div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
+          </div>
+
+          {/* Footer */}
+          <div className="relative z-10 text-center px-6">
+            <span className="font-inter font-medium text-[9px] md:text-[10px] tracking-[0.25em] uppercase text-white/40 block mb-6">
+              Recognition is earned through impact.
+            </span>
+            <button
+              onClick={scrollToForm}
+              className="bg-[#151515] hover:bg-[#F4A340] hover:text-black border border-white/10 text-white font-inter font-semibold text-[10px] md:text-[11px] tracking-[0.2em] uppercase rounded-full h-[44px] md:h-[48px] px-8 md:px-10 transition-all duration-300 shadow-lg"
+            >
+              APPLY FOR INTERNSHIP
+            </button>
           </div>
         </section>
 
@@ -527,26 +509,9 @@ export default function InternshipExperience() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-element">
                     <div className="flex flex-col gap-2">
-                      <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">State/UT<span className="text-[#FF9A3C] ml-1">*</span></label>
-                      <Select
-                        options={INDIAN_STATES}
-                        value={selectedState}
-                        onChange={setSelectedState}
-                        styles={customSelectStyles}
-                        placeholder="Select your State"
-                        isSearchable={true}
-                        required
-                        menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
-                        menuPosition="fixed"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
                       <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">Institution<span className="text-[#FF9A3C] ml-1">*</span></label>
                       <input name="institution" required type="text" className="bg-[#0B0B0B] border border-white/10 rounded-lg px-4 h-[48px] text-[14px] text-white focus:outline-none focus:border-[#FF9A3C] transition-colors" />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-element">
                     <div className="flex flex-col gap-2">
                       <label className="font-inter text-[11px] text-[#9CA3AF] tracking-[0.1em] uppercase">Degree</label>
                       <input name="degree" type="text" className="bg-[#0B0B0B] border border-white/10 rounded-lg px-4 h-[48px] text-[14px] text-white focus:outline-none focus:border-[#FF9A3C] transition-colors" />

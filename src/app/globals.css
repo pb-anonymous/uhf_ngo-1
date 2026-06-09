@@ -3,7 +3,33 @@
 @theme {
   --font-sans: var(--font-inter);
   --font-inter: var(--font-inter);
-  --font-cormorant: var(--font-cormorant);
+  /* Typography scale for responsive headings and centralized fonts */
+  --font-sora: var(--font-sora);
+  /* Legacy serif font removed and replaced with Sora */
+  --font-cormorant: var(--font-sora);
+  --font-serif: var(--font-sora);
+}
+
+/* Global heading font - used across all titles */
+h1, h2, h3, h4, h5, h6,
+.font-cormorant, .font-serif {
+  font-family: var(--font-sora) !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+  letter-spacing: normal !important;
+  font-style: normal !important;
+}
+
+/* Remove italic from headings and their children */
+h1 .italic, h2 .italic, h3 .italic, h4 .italic, h5 .italic, h6 .italic,
+.font-cormorant .italic, .font-serif .italic,
+.font-cormorant.italic, .font-serif.italic {
+  font-style: normal !important;
+}
+
+/* Body text font - used for paragraphs and descriptions */
+body {
+  font-family: var(--font-inter);
 }
 
 :root {

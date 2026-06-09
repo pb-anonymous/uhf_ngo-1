@@ -45,7 +45,16 @@ export default function ApplicationList({ initialApplications }: { initialApplic
       app.id === selectedApp.id ? { ...app, status: 'accepted' } : app
     ));
     
-    await approveApplication(selectedApp.id);
+    const res = await approveApplication(selectedApp.id);
+    
+    if (!res.success) {
+      // Revert optimistic update
+      setApplications(apps => apps.map(app => 
+        app.id === selectedApp.id ? { ...app, status: 'pending' } : app
+      ));
+      alert(`Approval failed: ${res.message}`);
+    }
+    
     setIsApproving(false);
     setSelectedApp(null);
   };

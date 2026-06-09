@@ -80,7 +80,7 @@ export default function Hero() {
 
           <h1
             ref={headlineRef}
-            className="font-cormorant font-light text-[56px] md:text-[84px] lg:text-[96px] leading-[1.05] text-[#F5F2EB] max-w-[650px] tracking-[-0.02em]"
+            className="!font-inter font-medium text-[48px] md:text-[72px] lg:text-[80px] leading-[1.05] text-[#F5F2EB] max-w-[650px] tracking-[-0.02em]"
           >
             Together We Can <br />
             <span className="italic">Change</span> <br />

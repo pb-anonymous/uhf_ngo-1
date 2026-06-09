@@ -31,19 +31,27 @@ export async function approveApplication(
         application.full_name
       );
 
+    const cleanEmail = application.email.trim();
+
     // Create Supabase Auth User
     const {
       data: authUser,
       error: authError,
     } =
       await supabaseAdmin.auth.admin.createUser({
-        email: application.email,
+        email: cleanEmail,
         password,
         email_confirm: true,
+        user_metadata: {
+          full_name: application.full_name,
+          role: "intern",
+          intern_code: internCode,
+        },
       });
 
     if (authError) {
-      throw new Error(authError.message);
+      console.error("Auth Create Error:", authError);
+      throw new Error(`Auth Error: ${authError.message}`);
     }
 
     const userId =
@@ -55,12 +63,11 @@ export async function approveApplication(
     } =
       await supabaseAdmin
         .from("profiles")
-        .insert({
+        .upsert({
           id: userId,
           full_name:
             application.full_name,
-          email:
-            application.email,
+          email: cleanEmail,
           role: "intern",
           intern_code:
             internCode,
@@ -81,9 +88,9 @@ export async function approveApplication(
       .eq("id", applicationId);
 
     // Send Credentials Email
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: application.email,
+    const emailRes = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+      to: cleanEmail,
       subject:
         "Internship Application Approved",
 
@@ -93,7 +100,7 @@ export async function approveApplication(
         <p>Your internship application has been approved.</p>
 
         <p><strong>Intern Code:</strong> ${internCode}</p>
-        <p><strong>Email:</strong> ${application.email}</p>
+        <p><strong>Email:</strong> ${cleanEmail}</p>
         <p><strong>Password:</strong> ${password}</p>
 
         <p>Please change your password after your first login.</p>
@@ -104,6 +111,12 @@ export async function approveApplication(
         <p>UHF India Team</p>
       `,
     });
+
+    if (emailRes.error) {
+      console.error("Resend Error:", emailRes.error);
+      // We throw here so the UI can show the error. Note: The user was already created in DB.
+      throw new Error(`Email sending failed: ${emailRes.error.message}. User was created in DB but email not sent. Check RESEND_FROM_EMAIL in .env.local.`);
+    }
 
     revalidatePath(
       "/admin/applications"

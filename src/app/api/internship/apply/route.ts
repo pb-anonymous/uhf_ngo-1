@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       .from("intern_applications")
       .insert({
         full_name: body.full_name,
-        email: body.email,
+        email: body.email.trim(),
         phone: body.phone,
         college: body.college,
         city: body.city,
